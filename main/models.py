@@ -7,7 +7,6 @@ class Product(models.Model):
     thumbnail = models.URLField()
     category = models.CharField(max_length=80)
     is_featured = models.BooleanField(default=False)
-    # opsional:
     stock = models.IntegerField(default=0)
     brand = models.CharField(max_length=80, blank=True)
     rating = models.FloatField(default=0.0)

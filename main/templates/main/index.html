@@ -1,2 +1,24 @@
-<h1>{{ app_name }}</h1>
-<p>Oleh: {{ student_name }} — {{ student_class }}</p>
+<h1>Football Shop</h1>
+<p>Oleh: {{ name }} — {{ class }}</p>
+
+<h2>Daftar Produk</h2>
+<ul>
+  {% for product in products %}
+    <li>
+      <img src="{{ product.thumbnail }}" width="120"><br>
+      <strong>{{ product.name }}</strong><br>
+      Rp {{ product.price }} <br>
+      {{ product.description }} <br>
+      Kategori: {{ product.category }} <br>
+      Brand: {{ product.brand }} <br>
+      Stok: {{ product.stock }} <br>
+      Rating: {{ product.rating }}⭐ <br>
+      {% if product.is_featured %}
+        <span style="color:red;">Produk Unggulan</span>
+      {% endif %}
+    </li>
+    <hr>
+  {% empty %}
+    <p>Belum ada produk ditambahkan.</p>
+  {% endfor %}
+</ul>
