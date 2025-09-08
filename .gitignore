@@ -1,0 +1,9 @@
+# Python/Django
+__pycache__/
+*.py[cod]
+*.log
+db.sqlite3
+.venv/
+env/
+staticfiles/
+.env*
