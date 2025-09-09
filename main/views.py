@@ -1,10 +1,13 @@
+# main/views.py
 from django.shortcuts import render
 from .models import Product
 
-def show_main(request):
+def home(request):  
     products = Product.objects.all()
-    return render(request, "main/index.html", {
+    context = {
         "name": "Febrian Abimanyu Wijanarko",
-        "class": "PBP CSGE602022 – 2025/2026",
+        "npm": "2406397984",     
+        "class": "PBP D",        
         "products": products,
-    })
+    }
+    return render(request, "main/index.html", context)

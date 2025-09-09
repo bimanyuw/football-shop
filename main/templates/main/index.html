@@ -1,24 +1,19 @@
 <h1>Football Shop</h1>
-<p>Oleh: {{ name }} — {{ class }}</p>
+
+<h5>NPM: </h5>
+<p>2406397984</p>
+<h5>Name: </h5>
+<p>Febrian Abimanyu Wijanarko<p>
+<h5>Class: </h5>
+<p>PBP D</p>
 
 <h2>Daftar Produk</h2>
-<ul>
-  {% for product in products %}
-    <li>
-      <img src="{{ product.thumbnail }}" width="120"><br>
-      <strong>{{ product.name }}</strong><br>
-      Rp {{ product.price }} <br>
-      {{ product.description }} <br>
-      Kategori: {{ product.category }} <br>
-      Brand: {{ product.brand }} <br>
-      Stok: {{ product.stock }} <br>
-      Rating: {{ product.rating }}⭐ <br>
-      {% if product.is_featured %}
-        <span style="color:red;">Produk Unggulan</span>
-      {% endif %}
-    </li>
-    <hr>
-  {% empty %}
-    <p>Belum ada produk ditambahkan.</p>
-  {% endfor %}
-</ul>
+{% if products %}
+  <ul>
+    {% for product in products %}
+      <li><strong>{{ product.name }}</strong></li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Belum ada produk ditambahkan.</p>
+{% endif %}
