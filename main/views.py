@@ -10,4 +10,4 @@ def home(request):
         "class": "PBP D",        
         "products": products,
     }
-    return render(request, "main.html", context)
+    return render(request, "main/index.html", context)
