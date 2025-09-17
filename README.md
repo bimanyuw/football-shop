@@ -102,3 +102,4 @@ F. Feedback untuk asdos (Tutorial 2)
   Tidak ada
 
 G. Bukti akses 4 URL dengan Postman
+  https://docs.google.com/document/d/1Vdt5iS2ThLA-VVtDcaSFVPgYhtiEnV1wWC5raiPi6gE/edit?tab=t.0
