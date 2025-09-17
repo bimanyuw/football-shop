@@ -8,6 +8,7 @@ Live: http://febrian-abimanyu-footballshop.pbp.cs.ui.ac.id
 Repo: https://github.com/bimanyuw/football-shop
 
 
+**TUGAS 2**
 A. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
 
     1. Inisiasi repo & environment
@@ -68,3 +69,36 @@ F. Apakah ada feedback untuk asisten dosen tutorial 1 yang telah kamu kerjakan s
 
   Tidak ada
 
+**TUGAS 3**
+A. Mengapa perlu data delivery di platform?
+
+  Aplikasi modern sering punya lebih dari satu klien seperti web, mobile, dan service lainnya. Data delivery adalah endpoint yang mengirim data mentah seperti JSON/XML yang memisahkan data dari presentasi, sehingga klien berbeda bisa memakai sumber data yang sama, integrasi ke sistem lain seperti ETL, analytics, dan mikroservis lebih mudah caching & versioning API bisa dikelola terpisah dari UI, dan pengujian jadi jelas karena kontrak datanya eksplisit.
+
+B. XML vs JSON—mana lebih baik? Mengapa JSON lebih populer? 
+
+  Keduanya sama-sama bisa merepresentasikan data terstruktur. Namun, JSON lebih populer karena sintaks nya ringkas & dekat dengan struktur objek di JavaScript/Python, parsing lebih cepat & payload lebih kecil untuk kebanyakan kasus, dan lebih enak dibaca dan ditulis secara manual. Di sisi lain, XML masih relevan untuk skenario dokumen berat, tapi untuk web API umum, JSON biasanya lebih efisien.
+
+C. Fungsi `is_valid()` pada form Django dan kenapa dibutuhkan? 
+
+  `is_valid()` menjalankan validasi untuk memeriksa tipe data, field wajib, batas nilai, serta validasi kustom `clean_*`. Jika valid, `form.cleaned_data` terisi aman digunakan/ disimpan. Tanpa validasi ini, data yang masuk bisa salah/berbahaya.
+
+D. Mengapa butuh `csrf_token` pada form Django? Apa risikonya kalau tidak ada? Bagaimana penyerang memanfaatkannya?
+
+  `csrf_token` mencegah Cross-Site Request Forgery yaitu dimana penyerang menipu browser korban agar mengirim POST ke situs tanpa sepengetahuan korban. Token unik per sesi memastikan hanya form sah dari situs yang diterima. Tanpa token, attacker bisa meletakkan form tersembunyi di situs lain yang menembak endpoint dengan kredensial korban.
+
+E. Cara implementasi checklist (step-by-step)
+
+  - Membuat `ProductForm` (ModelForm) → `forms.py`.  
+  - Menambah view `create_product()` untuk handle GET/POST, panggil `is_valid()`, `save()`, redirect ke `show_main`.  
+  - Membuat `product_detail()` untuk menampilkan detail item.  
+  - Membuat 4 endpoint data delivery: `show_xml`, `show_json`, `show_xml_by_id`, `show_json_by_id` dengan `django.core.serializers`.  
+  - Routing semua path di `main/urls.py` (termasuk memperbaiki `show_main`).  
+  - Update `index.html` → tombol Add** (ke `/add`) & Detail (per item).  
+  - Buat `create_product.html` dan `product_detail.html`.  
+  - Cek di browser & Postman (GET ke `/xml/`, `/json/`, `/xml/<id>/`, `/json/<id>/`).  
+  - Commit & push.
+
+F. Feedback untuk asdos (Tutorial 2)
+  Tidak ada
+
+G. Bukti akses 4 URL dengan Postman

@@ -1,17 +1,19 @@
 <h1>Football Shop</h1>
 
-<h5>NPM: </h5>
-<p>2406397984</p>
-<h5>Name: </h5>
-<p>Febrian Abimanyu Wijanarko<p>
-<h5>Class: </h5>
-<p>PBP D</p>
+<p>Oleh: {{ name }} — {{ class }}</p>
+<p>NPM: {{ npm }}</p>
+
+<a href="{% url 'create_product' %}">➕ Add</a>
 
 <h2>Daftar Produk</h2>
 {% if products %}
   <ul>
     {% for product in products %}
-      <li><strong>{{ product.name }}</strong></li>
+      <li>
+        <strong>{{ product.name }}</strong>
+        — Rp {{ product.price }}
+        <a href="{% url 'product_detail' product.pk %}">Detail</a>
+      </li>
     {% endfor %}
   </ul>
 {% else %}

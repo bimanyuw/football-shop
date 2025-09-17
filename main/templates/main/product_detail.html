@@ -1,0 +1,18 @@
+<h1>{{ product.name }}</h1>
+<p><img src="{{ product.thumbnail }}" alt="{{ product.name }}" style="max-width:200px;"></p>
+<ul>
+  <li>Price: Rp {{ product.price }}</li>
+  <li>Category: {{ product.category }}</li>
+  <li>Brand: {{ product.brand }}</li>
+  <li>Stock: {{ product.stock }}</li>
+  <li>Rating: {{ product.rating }}</li>
+  <li>Featured: {{ product.is_featured }}</li>
+</ul>
+
+<p>{{ product.description }}</p>
+
+<p>
+  <a href="{% url 'show_main' %}">← Back</a>
+  | <a href="{% url 'show_xml_by_id' product.pk %}">XML (by ID)</a>
+  | <a href="{% url 'show_json_by_id' product.pk %}">JSON (by ID)</a>
+</p>
