@@ -105,3 +105,64 @@ G. Bukti akses 4 URL dengan Postman
   https://docs.google.com/document/d/1Vdt5iS2ThLA-VVtDcaSFVPgYhtiEnV1wWC5raiPi6gE/edit?tab=t.0
 
 *TUGAS 4*
+A. Apa itu Django AuthenticationForm?
+  AuthenticationForm adalah form bawaan Django yang digunakan untuk proses login pengguna.
+  Kelebihan:
+  - Tidak perlu membuat form manual untuk login (sudah ada field username & password).
+  - Terintegrasi langsung dengan sistem autentikasi Django.
+  - Menyediakan validasi otomatis (contoh: username/password salah).
+  Kekurangan:
+  - Kurang fleksibel kalau mau menambahkan field custom (misalnya login dengan email).
+  - Tampilan default sederhana, biasanya perlu dikustomisasi.
+
+B. Apa perbedaan autentikasi dan otorisasi? Bagaimana Django mengimplementasikan keduanya?
+  Autentikasi adalah proses verifikasi identitas user (contoh: login dengan username & password), sementara otorisasi adalah proses pemberian izin akses setelah autentikasi berhasil (contoh: hanya admin boleh akses halaman admin).
+
+  Implementasi di Django:
+  - Autentikasi: memakai User model, AuthenticationForm, authenticate(), dan login().
+  - Otorisasi: memakai @login_required decorator, permissions, dan is_staff/is_superuser untuk    membatasi akses.
+
+
+C. Apa saja kelebihan dan kekurangan session dan cookies dalam konteks menyimpan state di aplikasi web?
+  Session
+  - Kelebihan: Data disimpan di server, lebih aman, bisa menyimpan data besar.
+  - Kekurangan: Membutuhkan resource server lebih banyak.
+
+  ookies
+  - Kelebihan: Disimpan di client/browser, tidak membebani server, sederhana untuk data kecil (misalnya last_login).
+  - Kekurangan: Mudah diutak-atik oleh user, ukuran terbatas (±4KB), ada risiko keamanan (XSS/CSRF).
+
+D. Apakah penggunaan cookies aman secara default dalam pengembangan web?
+  Cookies tidak sepenuhnya aman secara default, karena bisa disadap/diubah jika tidak dikonfigurasi dengan benar. Adapaun risikonya seperti XSS, CSRF, dan juga pencurian cookie (session hijacking).Django dapat menangani risiko-risiko tersebut dengan:
+  - HttpOnly cookies → tidak bisa diakses via JavaScript.
+  - CSRF token → mencegah CSRF attack.
+  - SESSION_COOKIE_SECURE = True (hanya lewat HTTPS)
+
+E. Step-by-Step Implementasi Checklist
+  1. Mengimplementasikan fungsi registrasi, login, logout
+  Pertama, saya mengimplementasikan fungsi registrasi, login, dan logout. Hal ini dilakukan dengan menambahkan tiga fungsi utama, yaitu register, login_user, dan logout_user pada views.py. Untuk mendukung fungsi tersebut, saya juga membuat dua berkas template baru, yaitu register.html dan login.html sebagai form autentikasi. Selanjutnya, saya menambahkan path pada urls.py agar halaman /register/, /login/, dan /logout/ dapat diakses oleh pengguna.
+
+  2. Menghubungkan model Product dengan User
+  Kedua, saya menghubungkan model Product dengan User. Caranya adalah dengan menambahkan field 
+
+  *user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)*
+  
+  pada models.py. Dengan adanya field ini, setiap produk yang dibuat akan otomatis terikat pada user yang membuatnya, sehingga data produk dapat dipersonalisasi sesuai akun pengguna.
+
+  3. Menampilkan detail user login dan cookie last_login
+  Ketiga, saya menambahkan fitur untuk menampilkan detail user login dan cookie last_login. Pada fungsi login_user, saya menambahkan baris kode 
+
+  *response.set_cookie('last_login', str(datetime.datetime.now()))*
+  
+  untuk menyimpan informasi waktu login terakhir. Sementara itu, pada fungsi logout_user saya menambahkan 
+  
+  *response.delete_cookie('last_login')*
+  
+  agar cookie tersebut terhapus ketika pengguna logout. Informasi waktu login terakhir ini kemudian ditampilkan di halaman utama index.html dengan menambahkan kode {{ last_login }}.
+
+  4. Membatasi akses halaman
+  Terakhir, saya melakukan pembatasan akses halaman dengan menggunakan decorator 
+  
+  *@login_required(login_url='/login/')*
+  
+  Sebagai contoh, decorator ini saya terapkan pada fungsi show_main agar hanya pengguna yang sudah login yang dapat mengakses halaman utama aplikasi. Dengan cara ini, sistem dapat lebih aman dan sesuai dengan status autentikasi pengguna.
