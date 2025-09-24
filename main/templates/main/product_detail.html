@@ -1,18 +1,36 @@
+{% extends 'base.html' %}
+{% block meta %}<title>{{ product.name }}</title>{% endblock meta %}
+
+{% block content %}
 <h1>{{ product.name }}</h1>
-<p><img src="{{ product.thumbnail }}" alt="{{ product.name }}" style="max-width:200px;"></p>
+
+{% if product.thumbnail %}
+  {# Jika URLField: pakai langsung; jika ImageField: product.thumbnail.url #}
+  <p>
+    <img src="{{ product.thumbnail.url|default:product.thumbnail }}"
+         alt="{{ product.name }}"
+         style="max-width:200px;height:auto;">
+  </p>
+{% endif %}
+
 <ul>
   <li>Price: Rp {{ product.price }}</li>
-  <li>Category: {{ product.category }}</li>
+  <li>
+    Category:
+    {{ product.get_category_display|default:product.category }}
+  </li>
   <li>Brand: {{ product.brand }}</li>
   <li>Stock: {{ product.stock }}</li>
   <li>Rating: {{ product.rating }}</li>
   <li>Featured: {{ product.is_featured }}</li>
+  {% if product.user %}<li>Author: {{ product.user.username }}</li>{% endif %}
 </ul>
 
 <p>{{ product.description }}</p>
 
 <p>
-  <a href="{% url 'show_main' %}">← Back</a>
-  | <a href="{% url 'show_xml_by_id' product.pk %}">XML (by ID)</a>
-  | <a href="{% url 'show_json_by_id' product.pk %}">JSON (by ID)</a>
+  <a href="{% url 'main:show_main' %}">← Back</a>
+  | <a href="{% url 'main:show_xml_by_id' product.pk %}">XML (by ID)</a>
+  | <a href="{% url 'main:show_json_by_id' product.pk %}">JSON (by ID)</a>
 </p>
+{% endblock content %}

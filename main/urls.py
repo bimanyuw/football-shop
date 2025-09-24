@@ -1,23 +1,17 @@
 # main/urls.py
 from django.urls import path
-from .views import (
-    show_main,
-    create_product,
-    product_detail,
-    show_xml, show_json,
-    show_xml_by_id, show_json_by_id,
-)
+from . import views  
+
+app_name = "main"
 
 urlpatterns = [
-    path("", show_main, name="show_main"),
-
-    # form & detail
-    path("add/", create_product, name="create_product"),
-    path("detail/<int:pk>/", product_detail, name="product_detail"),
-
-    # data delivery
-    path("xml/", show_xml, name="show_xml"),
-    path("json/", show_json, name="show_json"),
-    path("xml/<int:id>/", show_xml_by_id, name="show_xml_by_id"),
-    path("json/<int:id>/", show_json_by_id, name="show_json_by_id"),
+    path("", views.show_main, name="show_main"),
+    path("register/", views.register, name="register"),
+    path("login/", views.login_user, name="login"),
+    path("logout/", views.logout_user, name="logout"),
+    path("add/", views.create_product, name="create_product"),
+    path("detail/<uuid:pk>/", views.product_detail, name="product_detail"),
+    path("xml/<uuid:id>/", views.show_xml_by_id, name="show_xml_by_id"),
+    path("json/<uuid:id>/", views.show_json_by_id, name="show_json_by_id"),
 ]
+

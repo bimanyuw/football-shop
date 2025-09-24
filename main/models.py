@@ -1,6 +1,11 @@
 from django.db import models
+from django.contrib.auth.models import User
+from django.conf import settings
+
+import uuid
 
 class Product(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=120)
     price = models.IntegerField()
     description = models.TextField()
@@ -10,6 +15,8 @@ class Product(models.Model):
     stock = models.IntegerField(default=0)
     brand = models.CharField(max_length=80, blank=True)
     rating = models.FloatField(default=0.0)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='products')
+
 
     def __str__(self):
         return self.name

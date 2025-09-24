@@ -1,21 +1,53 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Football Shop</title>
+{% endblock meta %}
+
+{% block content %}
 <h1>Football Shop</h1>
 
 <p>Oleh: {{ name }} — {{ class }}</p>
 <p>NPM: {{ npm }}</p>
 
-<a href="{% url 'create_product' %}">➕ Add</a>
+<p>
+  <a href="{% url 'main:create_product' %}"><button>➕ Add Product</button></a>
+  <a href="{% url 'main:logout' %}"><button>Logout</button></a>
+</p>
+
+<h5>Sesi terakhir login: {{ last_login }}</h5>
+<hr />
+
+<p>
+  <a href="?filter=all"><button type="button">All Products</button></a>
+  <a href="?filter=my"><button type="button">My Products</button></a>
+</p>
 
 <h2>Daftar Produk</h2>
 {% if products %}
   <ul>
     {% for product in products %}
-      <li>
-        <strong>{{ product.name }}</strong>
-        — Rp {{ product.price }}
-        <a href="{% url 'product_detail' product.pk %}">Detail</a>
+      <li style="margin-bottom:20px;">
+        <strong>{{ product.name }}</strong> — Rp {{ product.price }}<br>
+
+       
+        {% if product.thumbnail.url %}
+          <img src="{{ product.thumbnail.url }}" alt="{{ product.name }}" style="max-width:150px; height:auto;">
+        {% else %}
+          <img src="{{ product.thumbnail }}" alt="{{ product.name }}" style="max-width:150px; height:auto;">
+        {% endif %}
+
+
+        <br>
+        {% if product.user %}
+          <small>Author: {{ product.user.username }}</small>
+        {% endif %}
+        | <a href="{% url 'main:product_detail' product.pk %}">Detail</a>
       </li>
     {% endfor %}
   </ul>
 {% else %}
   <p>Belum ada produk ditambahkan.</p>
 {% endif %}
+
+{% endblock content %}
