@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.views.decorators.http import require_POST
 import datetime  
 
 from .models import Product
@@ -102,3 +103,13 @@ def logout_user(request):
     response = HttpResponseRedirect(reverse('main:login'))
     response.delete_cookie('last_login')
     return response
+
+@login_required(login_url='/login/')
+@require_POST
+def delete_product(request, pk):
+    # Pastikan hanya pemilik produk yang bisa menghapus
+    product = get_object_or_404(Product, pk=pk, user=request.user)
+    name = product.name
+    product.delete()
+    messages.success(request, f"Produk '{name}' berhasil dihapus.")
+    return redirect('main:show_main')

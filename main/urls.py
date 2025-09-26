@@ -13,5 +13,6 @@ urlpatterns = [
     path("detail/<uuid:pk>/", views.product_detail, name="product_detail"),
     path("xml/<uuid:id>/", views.show_xml_by_id, name="show_xml_by_id"),
     path("json/<uuid:id>/", views.show_json_by_id, name="show_json_by_id"),
+    path("delete/<uuid:pk>/", views.delete_product, name="delete_product"),
 ]
 
