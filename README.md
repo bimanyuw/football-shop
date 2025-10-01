@@ -168,21 +168,35 @@ E. Step-by-Step Implementasi Checklist
   Sebagai contoh, decorator ini saya terapkan pada fungsi show_main agar hanya pengguna yang sudah login yang dapat mengakses halaman utama aplikasi. Dengan cara ini, sistem dapat lebih aman dan sesuai dengan status autentikasi pengguna.
 
   *Tugas 5*
-  A. Prioritas CSS selector: urutannya adalah inline style paling tinggi, kemudian selector ID, lalu class/atribut/pseudo-class, lalu tag/element selector. Jika ada selector dengan tingkat spesifik yang sama, maka yang ditulis paling akhir di file CSS akan dipakai.
+  A. Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!
+    Jika ada beberapa CSS selector yang berlaku untuk satu elemen, browser akan menentukan style berdasarkan urutan prioritas (specificity):
+    - !important selalu paling kuat.
+    - Inline style lebih tinggi daripada selector lain.
+    - ID selector lebih tinggi dari class.
+    - Class, attribute, dan pseudo-class lebih tinggi dari element/pseudo-element.
+    - Jika sama, aturan yang ditulis paling terakhir akan dipakai.
 
-  B. Responsive design penting supaya tampilan web tetap nyaman digunakan di berbagai ukuran layar (HP, tablet, laptop, desktop). Tanpa responsive design tampilan bisa berantakan di HP, sedangkan dengan responsive design semua elemen menyesuaikan ukuran layar. Contohnya, Tokopedia atau Shopee sudah responsif sehingga nyaman diakses dari ponsel maupun PC, sedangkan situs lama yang hanya untuk desktop tidak responsif dan teks/tombol jadi terlalu kecil di HP.
+  B. Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh aplikasi yang sudah dan belum menerapkan responsive design, serta jelaskan mengapa!
+    Responsive design penting karena pengguna mengakses aplikasi dari perangkat dengan ukuran layar berbeda. Tanpa desain responsif, tampilan bisa rusak atau tidak nyaman di HP. Contoh aplikasi yang sudah responsif adalah Tokopedia atau Shopee (tampilan menyesuaikan layar), sedangkan banyak situs instansi lama belum responsif sehingga harus zoom dan geser manual. Intinya, responsive design bikin aplikasi mudah diakses dan nyaman digunakan di semua perangkat.
 
-  C. Margin, border, padding: margin adalah jarak luar elemen dengan elemen lain, border adalah garis tepi yang membungkus elemen, padding adalah jarak dalam antara isi konten dengan border.
+  C. Jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!
+    - Margin adalah jarak di luar elemen, misalnya spasi antar card.
+    - Border adalah garis tepi yang mengelilingi elemen.
+    - Padding adalah jarak di dalam elemen, antara isi konten dengan border.
+    Ketiganya adalah bagian dari box model CSS. Implementasinya bisa dengan properti 
+    *margin: 16px;, border: 1px solid #E8C999;, atau padding: 12px;.*
 
-  D. Flexbox dan grid: Flexbox dipakai untuk layout satu dimensi (baris atau kolom), cocok untuk navbar atau align item secara horizontal/vertical. Grid dipakai untuk layout dua dimensi (baris dan kolom), cocok untuk menata galeri atau card layout yang rapi.
+  D. Jelaskan konsep flex box dan grid layout beserta kegunaannya!
+    Flexbox digunakan untuk layout satu dimensi (baris atau kolom) dan bagus untuk menyusun item seperti navbar atau tombol. Grid digunakan untuk layout dua dimensi (baris dan kolom) dan cocok untuk menampilkan daftar produk dalam bentuk grid responsif. Flex lebih fleksibel untuk alignment sederhana, Grid lebih kuat untuk susunan kompleks.
 
   E. Langkah implementasi:
-  - Menambahkan fitur edit dan delete product di views, lalu menampilkan tombol edit dan hapus di setiap card produk.
-
-  - Mengubah desain halaman login, register, tambah/edit produk, daftar produk, dan detail produk agar sesuai color palette (hitam, maroon, beige, cream).
-
-  - Membuat navbar responsif yang berubah menjadi hamburger menu di mobile.
-
-  - Mendesain card produk dengan hover effect, harga diformat ribuan, dan aksi edit/hapus untuk owner.
-
-  - Mendesain halaman detail produk dengan layout dua kolom (gambar besar di kiri, detail di kanan), menampilkan harga rapih, deskripsi, dan rating bintang.
+    - Membuat fitur edit dan delete produk dengan view baru (edit_product, delete_product), form, dan URL yang sesuai.
+    - Menambahkan tombol edit dan delete pada setiap card produk dimana hanya bisa dilihat oleh user pemilik produk.
+    - Mengatur tampilan halaman dengan Tailwind (saya menggunakan warna hitam, maroon, krem, dan gold sebagai color palletenya). Navbar dibuat responsif dimana ada kategori Shoes, Accessories, Jersey, dan juga menu mobile dengan hamburger.
+    - Menampilkan daftar produk dengan Grid dan jika kosong grid akan menampilkan state khusus dengan pesan dan tombol add product.
+    - Membuat card produk interaktif (saya menambahkan ada efek hover, jika kursor berada di atas card, card akan pop up), klik card akan membuka detail, dan tombol edit/delete bisa diklik.
+    - Styling halaman login, register, tambah/edit produk, dan detail produk agar konsisten dengan palet warna.
+    - Mengatur static files dan middleware (WhiteNoise) agar CSS bisa jalan di deployment.
+    - Menambahkan filter produk berdasarkan kategori atau pemilik lewat query parameter.
+    - Menyimpan informasi last login di cookie dan menampilkannya di bagian bawah halaman utama.
+    - Menguji semua fitur lalu melakukan git add, commit, dan push.
