@@ -166,3 +166,23 @@ E. Step-by-Step Implementasi Checklist
   *@login_required(login_url='/login/')*
   
   Sebagai contoh, decorator ini saya terapkan pada fungsi show_main agar hanya pengguna yang sudah login yang dapat mengakses halaman utama aplikasi. Dengan cara ini, sistem dapat lebih aman dan sesuai dengan status autentikasi pengguna.
+
+  *Tugas 5*
+  A. Prioritas CSS selector: urutannya adalah inline style paling tinggi, kemudian selector ID, lalu class/atribut/pseudo-class, lalu tag/element selector. Jika ada selector dengan tingkat spesifik yang sama, maka yang ditulis paling akhir di file CSS akan dipakai.
+
+  B. Responsive design penting supaya tampilan web tetap nyaman digunakan di berbagai ukuran layar (HP, tablet, laptop, desktop). Tanpa responsive design tampilan bisa berantakan di HP, sedangkan dengan responsive design semua elemen menyesuaikan ukuran layar. Contohnya, Tokopedia atau Shopee sudah responsif sehingga nyaman diakses dari ponsel maupun PC, sedangkan situs lama yang hanya untuk desktop tidak responsif dan teks/tombol jadi terlalu kecil di HP.
+
+  C. Margin, border, padding: margin adalah jarak luar elemen dengan elemen lain, border adalah garis tepi yang membungkus elemen, padding adalah jarak dalam antara isi konten dengan border.
+
+  D. Flexbox dan grid: Flexbox dipakai untuk layout satu dimensi (baris atau kolom), cocok untuk navbar atau align item secara horizontal/vertical. Grid dipakai untuk layout dua dimensi (baris dan kolom), cocok untuk menata galeri atau card layout yang rapi.
+
+  E. Langkah implementasi:
+  - Menambahkan fitur edit dan delete product di views, lalu menampilkan tombol edit dan hapus di setiap card produk.
+
+  - Mengubah desain halaman login, register, tambah/edit produk, daftar produk, dan detail produk agar sesuai color palette (hitam, maroon, beige, cream).
+
+  - Membuat navbar responsif yang berubah menjadi hamburger menu di mobile.
+
+  - Mendesain card produk dengan hover effect, harga diformat ribuan, dan aksi edit/hapus untuk owner.
+
+  - Mendesain halaman detail produk dengan layout dua kolom (gambar besar di kiri, detail di kanan), menampilkan harga rapih, deskripsi, dan rating bintang.

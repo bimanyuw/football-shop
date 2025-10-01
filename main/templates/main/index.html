@@ -1,53 +1,142 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block meta %}
 <title>Football Shop</title>
 {% endblock meta %}
 
 {% block content %}
-<h1>Football Shop</h1>
+<!-- Header -->
+<div class="mb-6">
+  <h1 class="text-3xl font-extrabold text-[#000000]">Latest Products</h1>
+  <p class="text-gray-700">Temukan produk terbaik untuk sepakbola</p>
+</div>
 
-<p>Oleh: {{ name }} — {{ class }}</p>
-<p>NPM: {{ npm }}</p>
+<!-- Toolbar: Kategori + Filter + Add -->
+<div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
 
-<p>
-  <a href="{% url 'main:create_product' %}"><button>➕ Add Product</button></a>
-  <a href="{% url 'main:logout' %}"><button>Logout</button></a>
-</p>
+  <!-- Kategori -->
+  <div class="flex flex-wrap gap-3">
+    <a href="?filter=Shoes"
+       class="px-4 py-2 rounded-md border 
+              {% if request.GET.filter == 'Shoes' %} 
+                bg-[#8E1616] text-white border-[#8E1616]
+              {% else %}
+                border-[#E8C999] text-[#000000] hover:bg-[#E8C999]
+              {% endif %}">
+      Shoes
+    </a>
 
-<h5>Sesi terakhir login: {{ last_login }}</h5>
-<hr />
+    <a href="?filter=Accessories"
+       class="px-4 py-2 rounded-md border 
+              {% if request.GET.filter == 'Accessories' %} 
+                bg-[#8E1616] text-white border-[#8E1616]
+              {% else %}
+                border-[#E8C999] text-[#000000] hover:bg-[#E8C999]
+              {% endif %}">
+      Accessories
+    </a>
 
-<p>
-  <a href="?filter=all"><button type="button">All Products</button></a>
-  <a href="?filter=my"><button type="button">My Products</button></a>
-</p>
+    <a href="?filter=Jersey"
+       class="px-4 py-2 rounded-md border 
+              {% if request.GET.filter == 'Jersey' %} 
+                bg-[#8E1616] text-white border-[#8E1616]
+              {% else %}
+                border-[#E8C999] text-[#000000] hover:bg-[#E8C999]
+              {% endif %}">
+      Jersey
+    </a>
+  </div>
 
-<h2>Daftar Produk</h2>
+  <!-- Filter All/My + Add -->
+  <div class="flex items-center gap-3">
+    <div class="inline-flex rounded-md overflow-hidden border border-[#E8C999]">
+      <a href="?" 
+         class="px-4 py-2 text-sm font-medium
+                {% if request.GET.filter == 'all' or not request.GET.filter %}
+                  bg-[#8E1616] text-white
+                {% else %}
+                  bg-white text-[#000000] hover:bg-[#F8EEDF]
+                {% endif %}">
+        All Products
+      </a>
+      <a href="?filter=my"
+         class="px-4 py-2 text-sm font-medium border-l border-[#E8C999]
+                {% if request.GET.filter == 'my' %}
+                  bg-[#8E1616] text-white
+                {% else %}
+                  bg-white text-[#000000] hover:bg-[#F8EEDF]
+                {% endif %}">
+        My Products
+      </a>
+    </div>
+
+    {% if user.is_authenticated %}
+      <a href="{% url 'main:create_product' %}"
+         class="px-4 py-2 rounded-md bg-[#8E1616] text-white hover:bg-[#000000] transition">
+        Add Product
+      </a>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Grid / Empty state -->
 {% if products %}
-  <ul>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
     {% for product in products %}
-      <li style="margin-bottom:20px;">
-        <strong>{{ product.name }}</strong> — Rp {{ product.price }}<br>
-
-       
-        {% if product.thumbnail.url %}
-          <img src="{{ product.thumbnail.url }}" alt="{{ product.name }}" style="max-width:150px; height:auto;">
-        {% else %}
-          <img src="{{ product.thumbnail }}" alt="{{ product.name }}" style="max-width:150px; height:auto;">
-        {% endif %}
-
-
-        <br>
-        {% if product.user %}
-          <small>Author: {{ product.user.username }}</small>
-        {% endif %}
-        | <a href="{% url 'main:product_detail' product.pk %}">Detail</a>
-      </li>
+      {% include 'main/card_product.html' %}
     {% endfor %}
-  </ul>
+  </div>
 {% else %}
-  <p>Belum ada produk ditambahkan.</p>
+  <div class="bg-white border border-[#E8C999] rounded-lg p-10 text-center">
+    <div class="mx-auto w-24 h-24 mb-4 text-[#E8C999]" aria-hidden="true">
+      <svg viewBox="0 0 24 24" class="w-full h-full">
+        <path d="M3 5h18v14H3z" fill="currentColor" opacity=".15"/>
+        <path d="M3 7h18M8 13h4m-4 4h8" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h3 class="text-lg font-semibold text-[#000000] mb-1">Belum ada produk</h3>
+    <p class="text-gray-700 mb-6">Jadilah yang pertama menambahkan produk ke toko.</p>
+    {% if user.is_authenticated %}
+      <a href="{% url 'main:create_product' %}"
+         class="inline-flex items-center px-4 py-2 rounded-md bg-[#8E1616] text-white hover:bg-[#000000]">
+        Add Product
+      </a>
+    {% else %}
+      <a href="{% url 'main:login' %}" class="text-[#8E1616] font-medium hover:underline">
+        Login untuk menambahkan produk
+      </a>
+    {% endif %}
+  </div>
 {% endif %}
 
+<!-- Last login di bawah -->
+{% if user.is_authenticated %}
+  <hr class="my-8 border-[#E8C999]" />
+  <p class="text-sm text-gray-600">
+    Last login: {{ last_login }}
+  </p>
+{% endif %}
 {% endblock content %}
+
+<script>
+  // Klik card product → ke detail (kecuali klik tombol edit/hapus)
+  document.addEventListener('click', function (e) {
+    const card = e.target.closest('.js-product-card');
+    if (!card) return;
+    if (e.target.closest('.js-no-nav')) return;
+    const url = card.getAttribute('data-href');
+    if (url) window.location.href = url;
+  });
+
+  // Enter/Space untuk aksesibilitas
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const card = e.target.closest('.js-product-card');
+    if (!card) return;
+    if (e.target.closest('.js-no-nav')) return;
+    e.preventDefault();
+    const url = card.getAttribute('data-href');
+    if (url) window.location.href = url;
+  });
+</script>

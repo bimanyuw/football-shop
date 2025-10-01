@@ -1,32 +1,79 @@
 {% extends 'base.html' %}
 
-{% block meta %}
-<title>Register</title>
-{% endblock meta %}
+{% block meta %}<title>Register</title>{% endblock meta %}
 
 {% block content %}
-<div>
-  <h1>Register</h1>
+<div class="min-h-[60vh] w-full flex items-center justify-center px-4">
+  <div class="w-full max-w-md bg-white border border-[#E8C999] rounded-lg p-6 shadow-sm">
+    <h1 class="text-2xl font-bold mb-1 text-[#000000]">
+      Create account <span class="text-[#8E1616]">Football Shop</span>
+    </h1>
+    <p class="text-gray-600 mb-6">Gabung untuk mulai menambah produk</p>
 
-  <form method="POST">
-    {% csrf_token %}
-    <table>
-      {{ form.as_table }}
-      <tr>
-        <td></td>
-        <td><input type="submit" name="submit" value="Daftar" /></td>
-      </tr>
-    </table>
-  </form>
+    {% if form.non_field_errors %}
+      <div class="mb-4 text-sm text-red-700 bg-red-50 border border-red-200 rounded p-3">
+        {% for e in form.non_field_errors %}{{ e }}{% endfor %}
+      </div>
+    {% endif %}
 
-  <p>Sudah punya akun? <a href="{% url 'main:login' %}">Login</a></p>
+    <form method="POST" class="space-y-4">
+      {% csrf_token %}
 
-  {% if messages %}
-  <ul>
-    {% for message in messages %}
-      <li>{{ message }}</li>
-    {% endfor %}
-  </ul>
-  {% endif %}
+      {# NOTE:
+         - Jika kamu sudah set widget class di forms.py, {{ field }} akan rapi.
+         - Kalau sebelumnya pakai filter add_class, aman juga.
+      #}
+      {% for field in form %}
+        <div>
+          <label class="block text-sm mb-1" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {% for error in field.errors %}
+            <p class="text-sm text-red-600 mb-1">{{ error }}</p>
+          {% endfor %}
+          {% if field|default_if_none:None and field|length != -1 %}
+            {{ field }}
+          {% endif %}
+          {# fallback styling kalau belum punya widget classes #}
+          <script>
+            (function(){
+              var el = document.currentScript.previousElementSibling;
+              if(el && !el.className.includes('px-4')) {
+                el.className += " w-full px-4 py-3 border border-[#E8C999] rounded-md focus:outline-none focus:border-[#8E1616] focus:ring-1 focus:ring-[#8E1616]";
+              }
+            })();
+          </script>
+          {% if field.help_text %}<p class="text-xs text-gray-500 mt-1">{{ field.help_text }}</p>{% endif %}
+        </div>
+      {% endfor %}
+
+      <button type="submit"
+              class="w-full py-3 rounded-md bg-[#8E1616] text-white hover:bg-[#000000] transition">
+        Register
+      </button>
+    </form>
+
+    {% if messages %}
+      <div class="mt-4 space-y-2">
+        {% for message in messages %}
+          <div class="text-sm p-3 rounded border
+            {% if message.tags == 'success' %}
+              bg-[#F8EEDF] border-[#E8C999] text-[#8E1616]
+            {% elif message.tags == 'error' %}
+              bg-red-50 border-red-200 text-red-700
+            {% else %}
+              bg-gray-50 border-gray-200 text-gray-700
+            {% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <p class="mt-6 text-sm text-gray-600">
+      Sudah punya akun?
+      <a class="text-[#8E1616] hover:text-[#000000] font-semibold" href="{% url 'main:login' %}">
+        Login
+      </a>
+    </p>
+  </div>
 </div>
 {% endblock content %}

@@ -17,7 +17,6 @@ class Product(models.Model):
     rating = models.FloatField(default=0.0)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='products')
 
-
     def __str__(self):
         return self.name
 

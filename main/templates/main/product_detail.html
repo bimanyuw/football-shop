@@ -1,53 +1,83 @@
 {% extends 'base.html' %}
+{% load humanize %}
 
-{% block meta %}
-  <title>{{ product.name }}</title>
-{% endblock meta %}
+{% block meta %}<title>{{ product.name }}</title>{% endblock meta %}
 
 {% block content %}
-  <h1>{{ product.name }}</h1>
-
-  {% if product.thumbnail %}
-    <p>
-      {# kalau ImageField -> pakai .url, kalau URLField -> langsung #}
-      <img src="{{ product.thumbnail.url|default:product.thumbnail }}"
-           alt="{{ product.name }}"
-           style="max-width:200px; height:auto;">
-    </p>
-  {% endif %}
-
-  <ul>
-    <li>Price: Rp {{ product.price }}</li>
-    <li>
-      Category: {{ product.get_category_display|default:product.category }}
-    </li>
-    <li>Brand: {{ product.brand }}</li>
-    <li>Stock: {{ product.stock }}</li>
-    <li>Rating: {{ product.rating }}</li>
-    <li>Featured: {{ product.is_featured }}</li>
-    {% if product.user %}
-      <li>Author: {{ product.user.username }}</li>
-    {% endif %}
-  </ul>
-
-  <p>{{ product.description }}</p>
-
-  <p>
-    <a href="{% url 'main:show_main' %}">← Back</a>
-    | <a href="{% url 'main:show_xml_by_id' product.pk %}">XML (by ID)</a>
-    | <a href="{% url 'main:show_json_by_id' product.pk %}">JSON (by ID)</a>
+<div class="bg-[#F8EEDF] min-h-screen py-10 px-6">
+  <div class="max-w-6xl mx-auto bg-white rounded-lg shadow p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
     
-    {% if request.user.is_authenticated and request.user == product.user %}
-      | 
-      <form action="{% url 'main:delete_product' product.pk %}"
-            method="post"
-            style="display:inline">
-        {% csrf_token %}
-        <button type="submit"
-                onclick="return confirm('Yakin mau hapus produk ini?')">
-          Hapus
-        </button>
-      </form>
-    {% endif %}
-  </p>
+    <!-- Gambar: background putih -->
+    <div class="flex items-center justify-center bg-white rounded-lg border border-[#E8C999]">
+      {% if product.thumbnail %}
+        <img src="{{ product.thumbnail }}" alt="{{ product.name }}"
+             class="object-contain max-h-[520px] w-auto">
+      {% else %}
+        <div class="text-gray-400 p-12">No Image</div>
+      {% endif %}
+    </div>
+
+    <!-- Detail -->
+    <div>
+      <h1 class="text-3xl font-extrabold text-[#000000] mb-2">{{ product.name }}</h1>
+
+      <!-- Harga pakai intcomma -->
+      <div class="text-2xl font-bold text-[#8E1616] mb-3">
+        Rp {{ product.price|intcomma }}
+      </div>
+
+      <!-- Rating bintang (overlay: rapi & support desimal) -->
+      <div class="flex items-center gap-2 mb-6">
+        <div class="relative inline-block leading-none align-middle" data-rating="{{ product.rating|default:'0' }}">
+          <!-- layer abu -->
+          <div class="flex text-gray-300">
+            {% for _ in '12345'|make_list %}
+              <svg class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path d="M10 2.5l2.6 5.27 5.82.85-4.21 4.1.99 5.78L10 15.9l-5.2 2.6.99-5.78-4.21-4.1 5.82-.85L10 2.5z"/>
+              </svg>
+            {% endfor %}
+          </div>
+          <!-- layer terisi -->
+          <div class="fill absolute inset-0 overflow-hidden" style="width:0%">
+            <div class="flex text-[#8E1616]">
+              {% for _ in '12345'|make_list %}
+                <svg class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path d="M10 2.5l2.6 5.27 5.82.85-4.21 4.1.99 5.78L10 15.9l-5.2 2.6.99-5.78-4.21-4.1 5.82-.85L10 2.5z"/>
+                </svg>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <span class="text-sm text-gray-600">({{ product.rating|default:"0" }})</span>
+      </div>
+
+      <div class="space-y-1 text-sm text-gray-700 mb-6">
+        <p><span class="font-semibold">Brand:</span> {{ product.brand }}</p>
+        {% if product.category %}<p><span class="font-semibold">Kategori:</span> {{ product.category }}</p>{% endif %}
+        <p><span class="font-semibold">Stock:</span> {{ product.stock }}</p>
+        {% if product.user %}<p><span class="font-semibold">Author:</span> {{ product.user.username }}</p>{% endif %}
+      </div>
+
+      <p class="text-gray-800 leading-relaxed mb-8">{{ product.description }}</p>
+
+      <a href="{% url 'main:show_main' %}"
+         class="inline-flex items-center gap-2 px-5 py-2 rounded-md border border-[#E8C999] text-[#000000] hover:bg-[#E8C999] transition">
+        ← Kembali
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<!-- Set lebar layer isi bintang = rating/5 * 100% -->
+<script>
+  document.querySelectorAll('[data-rating]').forEach(function(el){
+    var r = parseFloat(el.dataset.rating || '0');
+    if (isNaN(r)) r = 0;
+    r = Math.max(0, Math.min(5, r));
+    var pct = (r / 5) * 100;
+    var fill = el.querySelector('.fill');
+    if (fill) fill.style.width = pct + '%';
+  });
+</script>
 {% endblock content %}

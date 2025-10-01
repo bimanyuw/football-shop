@@ -13,23 +13,26 @@ import datetime
 from .models import Product
 from .forms import ProductForm
 
-
 @login_required(login_url='/login/')
 def show_main(request):
     filter_type = request.GET.get("filter", "all")
+
     if filter_type == "all":
         products = Product.objects.all().order_by("-id")
-    else: 
+    elif filter_type == "my":
         products = Product.objects.filter(user=request.user).order_by("-id")
+    else:
+        # kategori (case-insensitive)
+        products = Product.objects.filter(category__iexact=filter_type).order_by("-id")
 
     context = {
-        "name": request.user.username,  
+        "name": request.user.username,
         "npm": "2406397984",
         "class": "PBP D",
         "products": products,
-        "last_login": request.COOKIES.get("last_login", "Never"), 
+        "last_login": request.COOKIES.get("last_login", "Never"),
+        "filter_type": filter_type,
     }
-
     return render(request, "main/index.html", context)
 
 
@@ -46,6 +49,22 @@ def create_product(request):
         form = ProductForm()
     return render(request, "main/create_product.html", {"form": form})
 
+@login_required(login_url='/login/')
+def edit_product(request, pk):
+    product = get_object_or_404(Product, pk=pk, user=request.user)
+    if request.method == "POST":
+        form = ProductForm(request.POST, instance=product)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Produk berhasil diperbarui.")
+            return redirect("main:product_detail", pk=product.pk)
+    else:
+        form = ProductForm(instance=product)
+    return render(request, "main/create_product.html", {
+        "form": form,
+        "is_edit": True,
+        "product": product,
+    })
 
 @login_required(login_url='/login/')
 def product_detail(request, pk):
