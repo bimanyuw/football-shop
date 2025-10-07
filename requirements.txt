@@ -9,3 +9,12 @@ whitenoise==6.9.0
 Django>=4.2,<5.3
 gunicorn
 whitenoise
+
+django 
+gunicorn 
+whitenoise 
+psycopg2-binary 
+requests 
+urllib3 
+python-dotenv 
+selenium

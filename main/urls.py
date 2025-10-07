@@ -5,6 +5,12 @@ from . import views
 app_name = "main"
 
 urlpatterns = [
+    path("api/products/", views.api_products_list, name="api_products_list"),
+    path("api/products/create/", views.api_product_create, name="api_product_create"),
+    path("api/products/<uuid:pk>/update/", views.api_product_update, name="api_product_update"),
+    path("api/products/<uuid:pk>/delete/", views.api_product_delete, name="api_product_delete"),
+    path("auth/login-ajax/", views.login_ajax, name="login_ajax"),
+    path("auth/register-ajax/", views.register_ajax, name="register_ajax"),
     path("", views.show_main, name="show_main"),
     path("register/", views.register, name="register"),
     path("login/", views.login_user, name="login"),

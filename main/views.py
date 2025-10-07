@@ -132,3 +132,76 @@ def delete_product(request, pk):
     product.delete()
     messages.success(request, f"Produk '{name}' berhasil dihapus.")
     return redirect('main:show_main')
+
+
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import login
+from django.shortcuts import get_object_or_404
+
+def product_to_dict(p):
+    return {
+        "id": str(p.id),
+        "name": p.name,
+        "price": p.price,
+        "description": p.description,
+        "thumbnail": p.thumbnail,
+        "category": p.category,
+        "is_featured": p.is_featured,
+        "stock": p.stock,
+        "brand": p.brand,
+        "rating": p.rating,
+    }
+
+def api_products_list(request):
+    qs = Product.objects.all().order_by("-id")
+    data = [product_to_dict(p) for p in qs]
+    return JsonResponse(data, safe=False)
+
+@login_required(login_url='/login/')
+@require_http_methods(["POST"])
+def api_product_create(request):
+    form = ProductForm(request.POST)
+    if form.is_valid():
+        obj = form.save(commit=False)
+        obj.user = request.user
+        obj.save()
+        return JsonResponse({"status":"ok","id": str(obj.id)})
+    return JsonResponse({"status":"error","errors": form.errors}, status=400)
+
+@login_required(login_url='/login/')
+@require_http_methods(["POST"])
+def api_product_update(request, pk):
+    obj = get_object_or_404(Product, pk=pk, user=request.user)
+    form = ProductForm(request.POST, instance=obj)
+    if form.is_valid():
+        obj = form.save()
+        return JsonResponse({"status":"ok"})
+    return JsonResponse({"status":"error","errors": form.errors}, status=400)
+
+@login_required(login_url='/login/')
+@require_http_methods(["POST"])
+def api_product_delete(request, pk):
+    obj = get_object_or_404(Product, pk=pk, user=request.user)
+    obj.delete()
+    return JsonResponse({"status":"ok"})
+
+@require_http_methods(["POST"])
+def login_ajax(request):
+    form = AuthenticationForm(data=request.POST)
+    if form.is_valid():
+        user = form.get_user()
+        login(request, user)
+        from django.urls import reverse
+        return JsonResponse({"status":"ok","message":"Logged in","redirect": reverse("main:show_main")})
+    return JsonResponse({"status":"error","errors": form.errors, "message":"Invalid credentials"}, status=400)
+
+@require_http_methods(["POST"])
+def register_ajax(request):
+    form = UserCreationForm(request.POST)
+    if form.is_valid():
+        form.save()
+        from django.urls import reverse
+        return JsonResponse({"status":"ok","message":"Registered","redirect": reverse("main:login")})
+    return JsonResponse({"status":"error","errors": form.errors}, status=400)
