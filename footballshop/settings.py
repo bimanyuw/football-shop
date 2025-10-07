@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
 # Load environment variables from .env file
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,9 +25,7 @@ load_dotenv(BASE_DIR / ".env")
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-7+im5u5h%9hw%vd#^^vgi$ci97%mq7%aquff1_blcnfrb*g1ck'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
-DEBUG = True
+# SECURITY WARNING: don't run with debug turned on in production
 
 ALLOWED_HOSTS = [
     "localhost",
@@ -34,10 +33,7 @@ ALLOWED_HOSTS = [
     "febrian-abimanyu-footballshop.pbp.cs.ui.ac.id",
 ]
 
-
-
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin','django.contrib.auth','django.contrib.contenttypes',
     'django.contrib.sessions','django.contrib.messages','django.contrib.staticfiles',
@@ -83,20 +79,27 @@ CSRF_TRUSTED_ORIGINS = [
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+def need(name):
+    v = os.getenv(name)
+    if v is None or str(v).strip() == "":
+        raise ImproperlyConfigured(f"Missing env: {name}")
+    return str(v).strip()
+
+
+PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
+DEBUG = True
+
 # Database configuration
 if PRODUCTION:
-    # Production: gunakan PostgreSQL dengan kredensial dari environment variables
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('DB_NAME'),
-            'USER': os.getenv('DB_USER'),
-            'PASSWORD': os.getenv('DB_PASSWORD'),
-            'HOST': os.getenv('DB_HOST'),
-            'PORT': os.getenv('DB_PORT'),
-            'OPTIONS': {
-                'options': f"-c search_path={os.getenv('SCHEMA', 'public')}"
-            }
+            'NAME': need('DB_NAME'),
+            'USER': need('DB_USER'),
+            'PASSWORD': need('DB_PASSWORD'),
+            'HOST': need('DB_HOST'),   # <- jika ini tidak kebaca, Django akan meledak jelas
+            'PORT': os.getenv('DB_PORT', '5432'),
+            'OPTIONS': {'options': f"-c search_path={os.getenv('SCHEMA','public')}"}
         }
     }
 else:
