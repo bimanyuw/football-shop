@@ -22,3 +22,4 @@ class ProductForm(forms.ModelForm):
             "rating": forms.NumberInput(attrs={"class": _base_input, "step": "0.1", "min": 0, "max": 5}),
             "is_featured": forms.CheckboxInput(attrs={"class": _base_checkbox}),
         }
+        

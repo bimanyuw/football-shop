@@ -12,131 +12,234 @@
   <p class="text-gray-700">Find the best product for your football needs</p>
 </div>
 
-<!-- Toolbar: Kategori + Filter + Add -->
+<!-- Toolbar -->
 <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
-
   <!-- Kategori -->
   <div class="flex flex-wrap gap-3">
-    <a href="?filter=Shoes"
-       class="px-4 py-2 rounded-md border 
-              {% if request.GET.filter == 'Shoes' %} 
-                bg-[#8E1616] text-white border-[#8E1616]
-              {% else %}
-                border-[#E8C999] text-[#000000] hover:bg-[#E8C999]
-              {% endif %}">
-      Shoes
-    </a>
-
-    <a href="?filter=Accessories"
-       class="px-4 py-2 rounded-md border 
-              {% if request.GET.filter == 'Accessories' %} 
-                bg-[#8E1616] text-white border-[#8E1616]
-              {% else %}
-                border-[#E8C999] text-[#000000] hover:bg-[#E8C999]
-              {% endif %}">
-      Accessories
-    </a>
-
-    <a href="?filter=Jersey"
-       class="px-4 py-2 rounded-md border 
-              {% if request.GET.filter == 'Jersey' %} 
-                bg-[#8E1616] text-white border-[#8E1616]
-              {% else %}
-                border-[#E8C999] text-[#000000] hover:bg-[#E8C999]
-              {% endif %}">
-      Jersey
-    </a>
+    <button data-filter="Shoes" class="filter-btn px-4 py-2 rounded-md border border-[#E8C999] text-[#000000] hover:bg-[#E8C999]">Shoes</button>
+    <button data-filter="Accessories" class="filter-btn px-4 py-2 rounded-md border border-[#E8C999] text-[#000000] hover:bg-[#E8C999]">Accessories</button>
+    <button data-filter="Jersey" class="filter-btn px-4 py-2 rounded-md border border-[#E8C999] text-[#000000] hover:bg-[#E8C999]">Jersey</button>
   </div>
 
   <!-- Filter All/My + Add -->
   <div class="flex items-center gap-3">
     <div class="inline-flex rounded-md overflow-hidden border border-[#E8C999]">
-      <a href="?" 
-         class="px-4 py-2 text-sm font-medium
-                {% if request.GET.filter == 'all' or not request.GET.filter %}
-                  bg-[#8E1616] text-white
-                {% else %}
-                  bg-white text-[#000000] hover:bg-[#F8EEDF]
-                {% endif %}">
-        All Products
-      </a>
-      <a href="?filter=my"
-         class="px-4 py-2 text-sm font-medium border-l border-[#E8C999]
-                {% if request.GET.filter == 'my' %}
-                  bg-[#8E1616] text-white
-                {% else %}
-                  bg-white text-[#000000] hover:bg-[#F8EEDF]
-                {% endif %}">
-        My Products
-      </a>
+      <button data-filter="all" id="filter-all" class="px-4 py-2 text-sm font-medium bg-[#8E1616] text-white">All Products</button>
+      <button data-filter="my" id="filter-my" class="px-4 py-2 text-sm font-medium border-l border-[#E8C999] bg-white text-[#000000] hover:bg-[#F8EEDF]">My Products</button>
     </div>
-
     {% if user.is_authenticated %}
-      <a href="{% url 'main:create_product' %}"
-         class="px-4 py-2 rounded-md bg-[#8E1616] text-white hover:bg-[#000000] transition">
+      <button onclick="showModal()" class="px-4 py-2 rounded-md bg-[#8E1616] text-white hover:bg-[#000000] transition">
         Add Product
-      </a>
+      </button>
     {% endif %}
   </div>
 </div>
 
-<!-- Grid / Empty state -->
-{% if products %}
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-    {% for product in products %}
-      {% include 'main/card_product.html' %}
-    {% endfor %}
+<!-- Dynamic Container -->
+<div id="loading" class="bg-white border border-[#E8C999] rounded-lg p-10 text-center hidden">
+  <div class="mx-auto w-12 h-12 mb-4 text-[#8E1616] animate-spin">
+    <svg viewBox="0 0 24 24" class="w-full h-full">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+    </svg>
   </div>
-{% else %}
-  <div class="bg-white border border-[#E8C999] rounded-lg p-10 text-center">
-    <div class="mx-auto w-24 h-24 mb-4 text-[#E8C999]" aria-hidden="true">
-      <svg viewBox="0 0 24 24" class="w-full h-full">
-        <path d="M3 5h18v14H3z" fill="currentColor" opacity=".15"/>
-        <path d="M3 7h18M8 13h4m-4 4h8" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-      </svg>
-    </div>
-    <h3 class="text-lg font-semibold text-[#000000] mb-1">Belum ada produk</h3>
-    <p class="text-gray-700 mb-6">Jadilah yang pertama menambahkan produk ke toko.</p>
-    {% if user.is_authenticated %}
-      <a href="{% url 'main:create_product' %}"
-         class="inline-flex items-center px-4 py-2 rounded-md bg-[#8E1616] text-white hover:bg-[#000000]">
-        Add Product
-      </a>
-    {% else %}
-      <a href="{% url 'main:login' %}" class="text-[#8E1616] font-medium hover:underline">
-        Login untuk menambahkan produk
-      </a>
-    {% endif %}
-  </div>
-{% endif %}
+  <p class="text-gray-700">Loading products...</p>
+</div>
 
-<!-- Last login di bawah -->
+<div id="error" class="hidden bg-white border border-[#E8C999] rounded-lg p-10 text-center text-[#8E1616]">
+  Failed to load products. Please try again later.
+</div>
+
+<div id="empty" class="hidden bg-white border border-[#E8C999] rounded-lg p-10 text-center">
+  <div class="mx-auto w-24 h-24 mb-4 text-[#E8C999]" aria-hidden="true">
+    <svg viewBox="0 0 24 24" class="w-full h-full">
+      <path d="M3 5h18v14H3z" fill="currentColor" opacity=".15"/>
+      <path d="M3 7h18M8 13h4m-4 4h8" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <h3 class="text-lg font-semibold text-[#000000] mb-1">Belum ada produk</h3>
+  <p class="text-gray-700 mb-6">Jadilah yang pertama menambahkan produk ke toko.</p>
+  {% if user.is_authenticated %}
+    <button onclick="showModal()" class="inline-flex items-center px-4 py-2 rounded-md bg-[#8E1616] text-white hover:bg-[#000000]">
+      Add Product
+    </button>
+  {% else %}
+    <a href="{% url 'main:login' %}" class="text-[#8E1616] font-medium hover:underline">
+      Login untuk menambahkan produk
+    </a>
+  {% endif %}
+</div>
+
+<div id="grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+
 {% if user.is_authenticated %}
   <hr class="my-8 border-[#E8C999]" />
   <p class="text-sm text-gray-600">
     Last login: {{ last_login }}
   </p>
 {% endif %}
-{% endblock content %}
 
 <script>
-  // Klik card product → ke detail (kecuali klik tombol edit/hapus)
-  document.addEventListener('click', function (e) {
-    const card = e.target.closest('.js-product-card');
-    if (!card) return;
-    if (e.target.closest('.js-no-nav')) return;
-    const url = card.getAttribute('data-href');
-    if (url) window.location.href = url;
+const API_URL = "{% url 'main:show_json' %}";
+const USER_ID = "{{ user.id|default_if_none:'' }}";
+let allProducts = [];
+let activeFilter = "all";
+let activeCategory = null;
+
+// DOM Elements
+const loadingEl = document.getElementById("loading");
+const errorEl = document.getElementById("error");
+const emptyEl = document.getElementById("empty");
+const gridEl = document.getElementById("grid");
+const btnAll = document.getElementById("filter-all");
+const btnMy = document.getElementById("filter-my");
+
+function showState({loading=false, error=false, empty=false, grid=false}) {
+  loadingEl.classList.toggle("hidden", !loading);
+  errorEl.classList.toggle("hidden", !error);
+  emptyEl.classList.toggle("hidden", !empty);
+  gridEl.classList.toggle("hidden", !grid);
+}
+
+// format rupiah
+function rupiah(x){ return 'Rp ' + Number(x||0).toLocaleString('id-ID'); }
+
+// build card ala template lamamu, tapi dari data JSON (AJAX)
+function buildCard(p) {
+  const safeName  = DOMPurify.sanitize(p.name || '');
+  const safeDesc  = DOMPurify.sanitize(p.description || '');
+  const safeThumb = DOMPurify.sanitize(p.thumbnail || '');
+  const safeBrand = DOMPurify.sanitize(p.brand || 'Unknown Brand');
+  const safeCat   = DOMPurify.sanitize(p.category || '');
+  const isMine    = String(p.user_id) === String(USER_ID);
+
+  // URL detail / edit (trik placeholder angka lalu replace dengan id)
+  const detailUrl = `{% url 'main:product_detail' '00000000-0000-0000-0000-000000000000' %}`
+                    .replace('00000000-0000-0000-0000-000000000000', p.id);
+
+  const editUrl   = `{% url 'main:edit_product' '00000000-0000-0000-0000-000000000000' %}`
+                    .replace('00000000-0000-0000-0000-000000000000', p.id);
+
+  const delUrl    = `{% url 'main:ajax_product_delete' '00000000-0000-0000-0000-000000000000' %}`
+                    .replace('00000000-0000-0000-0000-000000000000', p.id);
+
+
+  const el = document.createElement('div');
+  el.setAttribute('role','link');
+  el.setAttribute('tabindex','0');
+  el.setAttribute('aria-label', `Lihat detail ${safeName}`);
+  el.className = `
+    bg-white border border-[#E8C999] rounded-lg p-4 flex flex-col
+    shadow-sm transition duration-200 ease-out
+    hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01]
+    cursor-pointer will-change-transform
+  `;
+
+  el.innerHTML = `
+    <div class="aspect-[4/3] mb-4 bg-[#F8EEDF] rounded-md overflow-hidden flex items-center justify-center">
+      ${safeThumb ? `<img src="${safeThumb}" alt="${safeName}" class="w-full h-full object-cover">`
+                  : `<span class="text-sm text-[#8E1616]">No Image</span>`}
+    </div>
+
+    <div class="text-xs font-semibold text-[#8E1616] uppercase mb-1 tracking-wide">
+      ${safeBrand}
+    </div>
+
+    <h3 class="text-base font-extrabold text-[#000000] leading-snug line-clamp-2 mb-2">
+      ${safeName}
+    </h3>
+
+    <div class="text-sm text-gray-600 mb-3">
+      ${safeCat ? `<span class="mr-3">Kategori: ${safeCat}</span>` : ``}
+      <span>Stock: ${Number(p.stock||0)}</span>
+    </div>
+
+    <div class="text-lg font-bold text-[#8E1616] mb-3">
+      ${rupiah(p.price)}
+    </div>
+
+    ${isMine ? `
+      <div class="mt-auto pt-3 border-t border-[#E8C999]/60 flex items-center gap-3 js-no-nav">
+        <a href="${editUrl}" class="text-sm text-[#000000] hover:text-[#8E1616]" onclick="event.stopPropagation();">
+          Edit
+        </a>
+        <button type="button"
+                class="text-sm text-[#8E1616] hover:text-red-700"
+                onclick="event.stopPropagation(); doDelete('${delUrl}');">
+          Hapus
+        </button>
+      </div>` : ``}
+  `;
+
+  // klik & keyboard navigate ke detail
+  el.addEventListener('click', () => window.location.href = detailUrl);
+  el.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); window.location.href = detailUrl; }
   });
 
-  // Enter/Space untuk aksesibilitas
-  document.addEventListener('keydown', function (e) {
-    if (e.key !== 'Enter' && e.key !== ' ') return;
-    const card = e.target.closest('.js-product-card');
-    if (!card) return;
-    if (e.target.closest('.js-no-nav')) return;
-    e.preventDefault();
-    const url = card.getAttribute('data-href');
-    if (url) window.location.href = url;
+  return el;
+}
+
+function renderList(items) {
+  gridEl.innerHTML = "";
+  items.forEach(p => gridEl.appendChild(buildCard(p)));
+}
+
+function applyFilters() {
+  let filtered = allProducts;
+  if (activeCategory) filtered = filtered.filter(p => (p.category || "").toLowerCase() === activeCategory.toLowerCase());
+  if (activeFilter === "my" && USER_ID) filtered = filtered.filter(p => String(p.user_id) === String(USER_ID));
+  if (!filtered.length) showState({empty:true});
+  else { renderList(filtered); showState({grid:true}); }
+}
+
+function setButtons() {
+  const on  = "bg-[#8E1616] text-white";
+  const off = "bg-white text-[#000000] hover:bg-[#F8EEDF]";
+  document.getElementById("filter-all").className =
+    "px-4 py-2 text-sm font-medium " + (activeFilter === "all" ? on : off);
+  document.getElementById("filter-my").className =
+    "px-4 py-2 text-sm font-medium border-l border-[#E8C999] " + (activeFilter === "my" ? on : off);
+}
+btnAll.addEventListener("click", () => { activeFilter="all"; setButtons(); applyFilters(); });
+btnMy.addEventListener("click",  () => { activeFilter="my";  setButtons(); applyFilters(); });
+
+async function loadProducts() {
+  try {
+    showState({loading:true});
+    const res = await fetch(API_URL);
+    if (!res.ok) throw new Error("Failed");
+    allProducts = await res.json();
+    applyFilters();
+  } catch (err) {
+    console.error(err);
+    showState({error:true});
+  }
+}
+
+async function doDelete(url) {
+  if (!confirm('Yakin hapus produk ini?')) return;
+  const res = await fetch(url, { method: 'POST', headers: { 'X-CSRFToken': getCookie('csrftoken') } });
+  const json = await res.json().catch(()=>({}));
+  if (!res.ok || !json.ok) { showToast('Failed', 'Gagal hapus produk', 'error'); return; }
+  showToast('Deleted', 'Produk berhasil dihapus', 'success');
+  loadProducts(); // refresh grid tanpa reload halaman
+}
+
+// Filter button handlers
+document.querySelectorAll(".filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    activeCategory = btn.dataset.filter;
+    loadProducts();
   });
+});
+btnAll.addEventListener("click", () => { activeFilter="all"; btnAll.classList.add("bg-[#8E1616]","text-white"); btnMy.classList.remove("bg-[#8E1616]","text-white"); applyFilters(); });
+btnMy.addEventListener("click", () => { activeFilter="my"; btnMy.classList.add("bg-[#8E1616]","text-white"); btnAll.classList.remove("bg-[#8E1616]","text-white"); applyFilters(); });
+
+// Listen event dari modal (create success)
+document.addEventListener("productAdded", loadProducts);
+
+// Init
+loadProducts();
 </script>
+{% endblock content %}

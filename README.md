@@ -200,3 +200,30 @@ E. Step-by-Step Implementasi Checklist
     - Menambahkan filter produk berdasarkan kategori atau pemilik lewat query parameter.
     - Menyimpan informasi last login di cookie dan menampilkannya di bagian bawah halaman utama.
     - Menguji semua fitur lalu melakukan git add, commit, dan push.
+
+  *Tugas 6*
+  A. Perbedaan antara synchronous dan asynchronous request
+    Pada synchronous request, proses komunikasi antara klien dan server berjalan secara berurutan. Browser harus menunggu seluruh permintaan selesai diproses oleh server sebelum pengguna dapat berinteraksi kembali dengan halaman. Pola ini membuat pengalaman pengguna terasa lambat karena setiap aksi akan menyebabkan halaman dimuat ulang secara keseluruhan.
+
+    Sebaliknya, asynchronous request yang diimplementasikan menggunakan AJAX (Asynchronous JavaScript and XML) memungkinkan proses komunikasi dengan server berlangsung di latar belakang tanpa menghentikan aktivitas pengguna. Hanya bagian tertentu dari halaman yang diperbarui, sedangkan elemen lain tetap dapat digunakan. Hal ini menjadikan tampilan web terasa lebih cepat, dinamis, dan interaktif karena tidak perlu melakukan reload halaman penuh.
+
+  B. Alur kerja AJAX di Django
+    Alur kerja AJAX di Django dimulai ketika pengguna melakukan aksi di browser yang memicu JavaScript untuk mengirim request menggunakan fungsi fetch menuju URL atau endpoint khusus yang menampung data AJAX. Request tersebut diterima oleh view Django, biasanya berupa fungsi dengan prefix seperti api_ atau ajax_.
+
+    Di dalam view, Django melakukan validasi data dan memproses logika bisnis seperti menambahkan produk, memperbarui data, atau melakukan autentikasi. Setelah itu, server akan mengembalikan respons dalam format JSON yang berisi status dan data yang diperlukan. JavaScript kemudian menerima respons tersebut dan memperbarui tampilan halaman secara langsung menggunakan manipulasi DOM tanpa perlu melakukan reload. Dengan demikian, komunikasi antara frontend dan backend berlangsung lebih efisien dan responsif.
+
+  C. Keuntungan AJAX dibanding render biasa
+    Penggunaan AJAX dalam Django memberikan berbagai keuntungan dibandingkan dengan render HTML secara penuh. Halaman web menjadi jauh lebih cepat dan responsif karena hanya bagian tertentu yang diperbarui tanpa perlu memuat ulang seluruh konten. Selain itu, penggunaan AJAX juga lebih hemat bandwidth karena data yang dikirim dan diterima berbentuk JSON, bukan keseluruhan template HTML.
+
+    Dari sisi pengalaman pengguna, AJAX memungkinkan adanya interaksi yang lebih kaya seperti menampilkan modal, toast notifikasi, dan indikator loading yang memperjelas keadaan sistem. Hal ini menciptakan kesan profesional dan modern karena pengguna selalu mendapat umpan balik secara langsung dari setiap aksi yang dilakukan.
+
+  D. Keamanan AJAX untuk Login dan Register
+    Meskipun AJAX meningkatkan kenyamanan dan efisiensi, keamanan tetap menjadi prioritas utama. Setiap permintaan POST yang dikirim menggunakan AJAX wajib menyertakan CSRF token agar server dapat memverifikasi keaslian request tersebut. Django sudah menyediakan perlindungan otomatis melalui middleware CSRF.
+
+    Selain itu, proses validasi harus tetap dilakukan di sisi server menggunakan form bawaan seperti AuthenticationForm dan UserCreationForm untuk memastikan data yang masuk sesuai standar. Password tidak boleh disimpan atau ditampilkan kembali dalam bentuk teks biasa. Penggunaan protokol HTTPS di lingkungan produksi juga sangat disarankan agar data terenkripsi selama transmisi. Terakhir, status kode HTTP seperti 400, 403, atau 404 perlu dikirim dengan tepat agar JavaScript dapat menampilkan pesan kesalahan yang sesuai di sisi pengguna.
+
+  E. Dampak AJAX terhadap User Experience
+    Penerapan AJAX memberikan dampak positif yang besar terhadap pengalaman pengguna. Proses interaksi menjadi jauh lebih cepat karena halaman tidak perlu direload setiap kali melakukan aksi. Pengguna juga mendapatkan umpan balik langsung melalui tampilan state seperti loading, empty, atau error sehingga mereka memahami apa yang sedang terjadi pada sistem.
+
+    Selain itu, notifikasi berupa toast, modal konfirmasi, atau pesan sukses membuat pengguna merasa lebih yakin dan terarah. Dengan demikian, website terasa lebih interaktif, efisien, dan nyaman digunakan, terutama untuk aplikasi yang menuntut banyak interaksi seperti e-commerce atau sistem manajemen data.
+
