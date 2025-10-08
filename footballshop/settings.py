@@ -9,14 +9,15 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-import os
 from pathlib import Path
+
+import os
 from dotenv import load_dotenv
-from django.core.exceptions import ImproperlyConfigured
 # Load environment variables from .env file
+load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / ".env") 
 
 
 # Quick-start development settings - unsuitable for production
@@ -26,17 +27,21 @@ load_dotenv(BASE_DIR / ".env")
 SECRET_KEY = 'django-insecure-7+im5u5h%9hw%vd#^^vgi$ci97%mq7%aquff1_blcnfrb*g1ck'
 
 # SECURITY WARNING: don't run with debug turned on in production
+PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
+DEBUG = True
 
-ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
-    "febrian-abimanyu-footballshop.pbp.cs.ui.ac.id",
-]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1","febrian-abimanyu-footballshop.pbp.cs.ui.ac.id",]
+
+CSRF_TRUSTED_ORIGINS = ["https://febrian-abimanyu-footballshop.pbp.cs.ui.ac.id"]
 
 # Application definition
 INSTALLED_APPS = [
-    'django.contrib.admin','django.contrib.auth','django.contrib.contenttypes',
-    'django.contrib.sessions','django.contrib.messages','django.contrib.staticfiles',
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
     'django.contrib.humanize',
     'main',
 ]
@@ -71,35 +76,23 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'footballshop.wsgi.application'
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://febrian-abimanyu-footballshop.pbp.cs.ui.ac.id",
-    "http://febrian-abimanyu-footballshop.pbp.cs.ui.ac.id",
-]
-
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-def need(name):
-    v = os.getenv(name)
-    if v is None or str(v).strip() == "":
-        raise ImproperlyConfigured(f"Missing env: {name}")
-    return str(v).strip()
-
-
-PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
-DEBUG = True
-
 # Database configuration
 if PRODUCTION:
+    # Production: gunakan PostgreSQL dengan kredensial dari environment variables
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': need('DB_NAME'),
-            'USER': need('DB_USER'),
-            'PASSWORD': need('DB_PASSWORD'),
-            'HOST': need('DB_HOST'),   # <- jika ini tidak kebaca, Django akan meledak jelas
-            'PORT': os.getenv('DB_PORT', '5432'),
-            'OPTIONS': {'options': f"-c search_path={os.getenv('SCHEMA','public')}"}
+            'NAME': os.getenv('DB_NAME'),
+            'USER': os.getenv('DB_USER'),
+            'PASSWORD': os.getenv('DB_PASSWORD'),
+            'HOST': os.getenv('DB_HOST'),
+            'PORT': os.getenv('DB_PORT'),
+            'OPTIONS': {
+                'options': f"-c search_path={os.getenv('SCHEMA', 'public')}"
+            }
         }
     }
 else:
@@ -110,8 +103,6 @@ else:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -148,18 +139,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
-from pathlib import Path
-BASE_DIR = Path(__file__).resolve().parent.parent
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+if DEBUG:
+    STATICFILES_DIRS = [
+        BASE_DIR / 'static' 
+    ]
+else:
+    STATIC_ROOT = BASE_DIR / 'static'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
 
