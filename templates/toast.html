@@ -9,3 +9,41 @@
   </div>
 </div>
 <script src="{% static 'js/toast.js' %}"></script>
+<script>
+// helper CSRF (kalau belum ada)
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+// attach ke dua tombol (desktop + mobile) kalau ada
+function bindAjaxLogout(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('click', async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("{% url 'main:ajax_logout' %}", {
+        method: 'POST',
+        headers: { 'X-CSRFToken': getCookie('csrftoken') }
+      });
+      if (res.ok) {
+        showToast('Logged out', 'Sampai jumpa!', 'success');
+        window.location = "{% url 'main:login' %}";
+      } else {
+        showToast('Logout gagal', 'Coba lagi sebentar', 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Error', 'Koneksi bermasalah', 'error');
+    }
+  });
+}
+
+// jalankan setelah DOM siap
+document.addEventListener('DOMContentLoaded', () => {
+  bindAjaxLogout('btn-logout');
+  bindAjaxLogout('btn-logout-mobile');
+});
+</script>

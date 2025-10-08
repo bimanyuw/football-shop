@@ -46,7 +46,7 @@
           <div class="hidden md:flex items-center gap-4 text-sm">
             {% if user.is_authenticated %}
               <span class="whitespace-nowrap">{{ user.username }}</span>
-              <a href="{% url 'main:logout' %}" class="text-[#8E1616] hover:text-[#E8C999]">Logout</a>
+              <a href="#" id="btn-logout" class="text-[#8E1616] hover:text-[#E8C999]">Logout</a>
             {% else %}
               <a href="{% url 'main:login' %}" class="hover:text-[#E8C999]">Login</a>
               <a href="{% url 'main:register' %}" class="hover:text-[#E8C999]">Register</a>
@@ -79,7 +79,7 @@
 
           {% if user.is_authenticated %}
             <div class="pt-2 text-gray-300">Hi, {{ user.username }}</div>
-            <a href="{% url 'main:logout' %}" class="block text-[#8E1616]">Logout</a>
+            <a href="#" id="btn-logout-mobile" class="block text-[#8E1616]">Logout</a>
           {% else %}
             <a href="{% url 'main:login' %}" class="block hover:text-[#E8C999]">Login</a>
             <a href="{% url 'main:register' %}" class="block hover:text-[#E8C999]">Register</a>

@@ -28,10 +28,17 @@
       <button data-filter="my" id="filter-my" class="px-4 py-2 text-sm font-medium border-l border-[#E8C999] bg-white text-[#000000] hover:bg-[#F8EEDF]">My Products</button>
     </div>
     {% if user.is_authenticated %}
-      <button onclick="showModal()" class="px-4 py-2 rounded-md bg-[#8E1616] text-white hover:bg-[#000000] transition">
-        Add Product
-      </button>
-    {% endif %}
+  <!-- Tombol Refresh -->
+  <button id="btn-refresh" class="px-4 py-2 rounded-md border border-[#E8C999] text-[#000000] hover:bg-[#E8C999] transition">
+    Refresh
+  </button>
+
+  <!-- Tombol Add Product -->
+  <button onclick="showModal()" class="px-4 py-2 rounded-md bg-[#8E1616] text-white hover:bg-[#000000] transition">
+    Add Product
+  </button>
+{% endif %}
+
   </div>
 </div>
 
@@ -241,5 +248,12 @@ document.addEventListener("productAdded", loadProducts);
 
 // Init
 loadProducts();
+// Tombol Refresh
+document.getElementById("btn-refresh")?.addEventListener("click", async () => {
+  showToast("Refreshing...", "Memuat ulang daftar produk", "info");
+  await loadProducts();
+  showToast("Refreshed", "Daftar produk terbaru ditampilkan", "success");
+});
+
 </script>
 {% endblock content %}
