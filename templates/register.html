@@ -69,23 +69,30 @@
 
     btn.disabled = true; const old = btn.textContent; btn.textContent = 'Registering...';
     try{
-      const res = await fetch("{% url 'main:ajax_register' %}", {
+      const res = await fetch("{% url 'main:ajax_register' %}", {   // <<< pastikan name cocok
         method: 'POST',
         headers: {'X-CSRFToken': getCookie('csrftoken')},
-        body: new FormData(form),
+        credentials: 'same-origin',                   // <<< tambahkan ini
+        body: new FormData(form),                     // kirim FORM (UserCreationForm baca request.POST)
       });
-      const data = await res.json();
 
-      if (res.ok && data.status === 'ok') {
-        showToast('Registered', 'Akun berhasil dibuat', 'success');
+      const data = await res.json().catch(()=> ({}));
+
+      // Backend kirim `ok`, bukan `status`
+      if (res.ok && data.ok) {
+        showToast('Registered', data.msg || 'Akun berhasil dibuat', 'success');
+        // ikuti redirect dari backend kalau ada
         window.location.href = data.redirect || "{% url 'main:login' %}";
       } else {
+        // Tampilkan error field & non-field
         if (data.errors){
-          if (data.errors.username) setErr('username', data.errors.username.join(' '));
+          if (data.errors.username)  setErr('username',  data.errors.username.join(' '));
           if (data.errors.password1) setErr('password1', data.errors.password1.join(' '));
           if (data.errors.password2) setErr('password2', data.errors.password2.join(' '));
+          if (data.errors.__all__)   showToast('Gagal mendaftar', data.errors.__all__.join(' '), 'error');
+        } else {
+          showToast('Gagal mendaftar', data.msg || 'Periksa kembali isian formulir', 'error');
         }
-        showToast('Gagal mendaftar', 'Periksa kembali isian formulir', 'error');
       }
     } catch(err){
       console.error(err);
