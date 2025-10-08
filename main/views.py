@@ -4,11 +4,12 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.core import serializers
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods, require_POST
 from django.utils.html import strip_tags
+from django.views.decorators.csrf import csrf_protect
 import datetime
 
 from .models import Product

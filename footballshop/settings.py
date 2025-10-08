@@ -13,16 +13,11 @@ from pathlib import Path
 
 import os
 from dotenv import load_dotenv
+# Load environment variables from .env file
+load_dotenv()
 
-PG_SCHEMA = os.getenv("SCHEMA", "public")
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / ".env")
-# Load environment variables from .env file
-if os.getenv("PWS_ENV") == "production":
-    load_dotenv(BASE_DIR / ".env.prod", override=True)
-
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -32,9 +27,9 @@ SECRET_KEY = 'django-insecure-7+im5u5h%9hw%vd#^^vgi$ci97%mq7%aquff1_blcnfrb*g1ck
 
 # SECURITY WARNING: don't run with debug turned on in production
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
-DEBUG = not PRODUCTION
+DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1","febrian-abimanyu-footballshop.pbp.cs.ui.ac.id",]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1","febrian-abimanyu-footballshop.pbp.cs.ui.ac.id",'http://localhost:8000','http://127.0.0.1:8000',]
 
 CSRF_TRUSTED_ORIGINS = ["https://febrian-abimanyu-footballshop.pbp.cs.ui.ac.id"]
 
@@ -89,15 +84,13 @@ if PRODUCTION:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('DB_NAME', ''),
-            'USER': os.getenv('DB_USER', ''),
-            'PASSWORD': os.getenv('DB_PASSWORD', ''),
-            'HOST': os.getenv('DB_HOST', '127.0.0.1'),  # jangan '' agar tidak ke Unix socket
-            'PORT': os.getenv('DB_PORT', '5432'),
-            'CONN_MAX_AGE': 600,
+            'NAME': os.getenv('DB_NAME'),
+            'USER': os.getenv('DB_USER'),
+            'PASSWORD': os.getenv('DB_PASSWORD'),
+            'HOST': os.getenv('DB_HOST'),
+            'PORT': os.getenv('DB_PORT'),
             'OPTIONS': {
-                # set schema utama kamu
-                'options': f'-c search_path={PG_SCHEMA},public'
+                'options': f"-c search_path={os.getenv('SCHEMA', 'public')}"
             }
         }
     }

@@ -47,6 +47,7 @@
     const v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
     return v ? v.pop() : '';
   }
+
   const form = document.getElementById('login-form');
   const btn  = document.getElementById('btn-login');
 
@@ -59,35 +60,54 @@
 
   form.addEventListener('submit', async (e)=>{
     e.preventDefault();
-    setErr('username',''); setErr('password','');
+    setErr('username',''); 
+    setErr('password','');
 
-    btn.disabled = true; const old = btn.textContent; btn.textContent = 'Logging in...';
+    btn.disabled = true; 
+    const old = btn.textContent; 
+    btn.textContent = 'Logging in...';
+
     try{
       const res = await fetch("{% url 'main:ajax_login' %}", {
         method: 'POST',
-        headers: {'X-CSRFToken': getCookie('csrftoken')},
-        body: new FormData(form),
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken'),
+          // NOTE: JANGAN set Content-Type manual saat pakai FormData
+        },
+        credentials: 'same-origin',              // <<< TAMBAH INI
+        body: new FormData(form),                // kirim FORM (sesuai AuthenticationForm)
       });
-      const data = await res.json();
 
-      if (res.ok && data.status === 'ok') {
+      // coba parse JSON dulu
+      const data = await res.json().catch(()=> ({}));
+
+      // <<< PERBAIKI CEK SUKSES: backend mengirim `ok`, bukan `status`
+      if (res.ok && data.ok) {
         showToast('Welcome', 'Login berhasil', 'success');
         window.location.href = data.redirect || "{% url 'main:show_main' %}";
-      } else {
-        // tampilkan error field jika ada
-        if (data.errors){
-          if (data.errors.username) setErr('username', data.errors.username.join(' '));
-          if (data.errors.password) setErr('password', data.errors.password.join(' '));
-        }
-        showToast('Login gagal', data.message || 'Periksa username/password', 'error');
+        return;
       }
+
+      // === GAGAL ===
+      // Tampilkan error field & non-field
+      if (data.errors){
+        if (data.errors.username) setErr('username', data.errors.username.join(' '));
+        if (data.errors.password) setErr('password', data.errors.password.join(' '));
+        if (data.errors.__all__)  showToast('Login gagal', data.errors.__all__.join(' '), 'error');
+      } else {
+        // key pesan dari backend adalah `msg` (bukan `message`)
+        showToast('Login gagal', data.msg || 'Periksa username/password', 'error');
+      }
+
     } catch(err){
       console.error(err);
       showToast('Error', 'Terjadi kesalahan jaringan', 'error');
     } finally {
-      btn.disabled = false; btn.textContent = old;
+      btn.disabled = false; 
+      btn.textContent = old;
     }
   });
 })();
 </script>
+
 {% endblock content %}
