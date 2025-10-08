@@ -17,13 +17,10 @@ from dotenv import load_dotenv
 PG_SCHEMA = os.getenv("SCHEMA", "public")
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+load_dotenv(BASE_DIR / ".env")
 # Load environment variables from .env file
 if os.getenv("PWS_ENV") == "production":
-    load_dotenv(BASE_DIR / ".env.prod")
-else:
-    load_dotenv(BASE_DIR / ".env")
-print("DB_HOST runtime:", repr(os.getenv("DB_HOST")))
+    load_dotenv(BASE_DIR / ".env.prod", override=True)
 
 
 
@@ -35,7 +32,7 @@ SECRET_KEY = 'django-insecure-7+im5u5h%9hw%vd#^^vgi$ci97%mq7%aquff1_blcnfrb*g1ck
 
 # SECURITY WARNING: don't run with debug turned on in production
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
-DEBUG = True
+DEBUG = not PRODUCTION
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1","febrian-abimanyu-footballshop.pbp.cs.ui.ac.id",]
 
