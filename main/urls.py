@@ -17,7 +17,7 @@ urlpatterns = [
 
     # AJAX Auth
     path("ajax/login/", views.login_ajax, name="ajax_login"),
-    path("ajax/register/", views.register_ajax, name="register_ajax"),
+    path("ajax/register/", views.register_ajax, name="ajax_register"),
     path("ajax/logout/", views.logout_ajax, name="ajax_logout"),
 
     # (opsional) halaman klasik
