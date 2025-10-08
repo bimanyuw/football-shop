@@ -13,12 +13,8 @@ import datetime
 from .models import Product
 from .forms import ProductForm
 
-
-# ========== MAIN PAGE ==========
-
 @login_required(login_url='/login/')
 def show_main(request):
-    """Menampilkan halaman utama berisi daftar produk."""
     filter_type = request.GET.get("filter", "all")
 
     if filter_type == "all":
@@ -39,10 +35,7 @@ def show_main(request):
     return render(request, "main/index.html", context)
 
 
-# ========== AUTH ==========
-
 def register(request):
-    """Halaman registrasi pengguna."""
     form = UserCreationForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         form.save()
@@ -52,7 +45,6 @@ def register(request):
 
 
 def login_user(request):
-    """Halaman login pengguna."""
     form = AuthenticationForm(request, data=request.POST or None)
     if request.method == "POST" and form.is_valid():
         user = form.get_user()
@@ -64,7 +56,6 @@ def login_user(request):
 
 
 def logout_user(request):
-    """Logout pengguna."""
     logout(request)
     response = HttpResponseRedirect(reverse("main:login"))
     response.delete_cookie("last_login")

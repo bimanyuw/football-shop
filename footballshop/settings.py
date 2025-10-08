@@ -13,11 +13,17 @@ from pathlib import Path
 
 import os
 from dotenv import load_dotenv
-# Load environment variables from .env file
-load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env file
+if os.getenv("PWS_ENV") == "production":
+    load_dotenv(BASE_DIR / ".env.prod")
+else:
+    load_dotenv(BASE_DIR / ".env")
+print("DB_HOST runtime:", repr(os.getenv("DB_HOST")))
+
 
 
 # Quick-start development settings - unsuitable for production
