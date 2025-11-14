@@ -155,7 +155,6 @@ def logout_ajax(request):
 
 
 # =======================
-# (Opsional) Halaman klasik yang masih kamu pakai
 # =======================
 @login_required(login_url='/login/')
 def create_product(request):
@@ -221,7 +220,7 @@ def show_json_by_id(request, id):
 
 
 # =======================
-# Auth (render biasa sebagai fallback)
+# Auth
 # =======================
 def register(request):
     form = UserCreationForm(request.POST or None)

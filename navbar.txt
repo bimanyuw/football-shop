@@ -1,20 +1,4 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    {% block meta %}{% endblock meta %}
-    <link rel="stylesheet" href="{% static 'css/global.css' %}">
-    <!-- Tailwind via CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- DOMPurify (sesuai tutorial: sanitasi di client) -->
-    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
-  </head>
-
-  <body class="bg-[#F8EEDF] text-[#000000]">
-    
-    <!-- NAVBAR (fixed top) -->
+<!-- NAVBAR (fixed top) -->
     <nav class="fixed top-0 left-0 w-full z-50 bg-[#000000] text-white border-b border-[#E8C999]">
       <div class="max-w-7xl mx-auto px-4">
         <div class="h-14 flex items-center gap-4">
@@ -87,40 +71,3 @@
         </div>
       </div>
     </nav>
-
-    <!-- PAGE CONTENT (padding-top agar tidak ketutup navbar fixed) -->
-    <main class="pt-16">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {% block content %}{% endblock content %}
-      </div>
-    </main>
-
-    <!-- Script toggle menu mobile -->
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const btn = document.getElementById("navBtn");
-        const menu = document.getElementById("navMenu");
-        if (!btn || !menu) return;
-
-        btn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          menu.classList.toggle("hidden");
-          const expanded = btn.getAttribute("aria-expanded") === "true";
-          btn.setAttribute("aria-expanded", (!expanded).toString());
-        });
-
-        // Klik di luar menu → auto close
-        document.addEventListener("click", (e) => {
-          if (!menu.classList.contains("hidden")) {
-            const inside = e.target.closest("#navMenu") || e.target.closest("#navBtn");
-            if (!inside) menu.classList.add("hidden");
-          }
-        });
-      });
-    </script>
-
-    <!-- include komponen dari tutorial -->
-    {% include 'toast.html' %}
-    {% include 'modal.html' %}
-  </body>
-</html>

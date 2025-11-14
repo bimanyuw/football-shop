@@ -69,11 +69,11 @@
 
     btn.disabled = true; const old = btn.textContent; btn.textContent = 'Registering...';
     try{
-      const res = await fetch("{% url 'main:ajax_register' %}", {   // <<< pastikan name cocok
+      const res = await fetch("{% url 'main:ajax_register' %}", {   
         method: 'POST',
         headers: {'X-CSRFToken': getCookie('csrftoken')},
-        credentials: 'same-origin',                   // <<< tambahkan ini
-        body: new FormData(form),                     // kirim FORM (UserCreationForm baca request.POST)
+        credentials: 'same-origin',                   
+        body: new FormData(form),                    
       });
 
       const data = await res.json().catch(()=> ({}));

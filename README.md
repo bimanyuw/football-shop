@@ -120,8 +120,7 @@ B. Apa perbedaan autentikasi dan otorisasi? Bagaimana Django mengimplementasikan
 
   Implementasi di Django:
   - Autentikasi: memakai User model, AuthenticationForm, authenticate(), dan login().
-  - Otorisasi: memakai @login_required decorator, permissions, dan is_staff/is_superuser untuk    membatasi akses.
-
+  - Otorisasi: memakai @login_required decorator, permissions, dan is_staff/is_superuser untuk membatasi akses.
 
 C. Apa saja kelebihan dan kekurangan session dan cookies dalam konteks menyimpan state di aplikasi web?
   Session
