@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-7+im5u5h%9hw%vd#^^vgi$ci97%mq7%aquff1_blcnfrb*g1ck
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1","febrian-abimanyu-footballshop.pbp.cs.ui.ac.id",'http://localhost:8000','http://127.0.0.1:8000',]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1","febrian-abimanyu-footballshop.pbp.cs.ui.ac.id",'http://localhost:8000','http://127.0.0.1:8000',"10.0.2.2"]
 
 CSRF_TRUSTED_ORIGINS = ["https://febrian-abimanyu-footballshop.pbp.cs.ui.ac.id"]
 
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'main',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -54,6 +55,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
 ]
 
 ROOT_URLCONF = 'footballshop.urls'
@@ -149,4 +154,12 @@ else:
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+
+CSRF_COOKIE_SECURE = False  # kalau masih HTTP lokal
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = 'Lax'
 

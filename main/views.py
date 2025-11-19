@@ -9,19 +9,14 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods, require_POST
 from django.utils.html import strip_tags
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_protect, csrf_exempt
 import datetime
 
 from .models import Product
 from .forms import ProductForm
 
-
-# =======================
-# Page container (AJAX)
-# =======================
 @login_required(login_url='/login/')
 def show_main(request):
-    """Render halaman utama; list produk di-load via JS (fetch JSON)."""
     return render(request, "main/index.html", {
         "name": request.user.username,
         "npm": "2406397984",
@@ -29,10 +24,6 @@ def show_main(request):
         "last_login": request.COOKIES.get("last_login", "Never"),
     })
 
-
-# =======================
-# Serializer helper
-# =======================
 def product_to_dict(p: Product):
     return {
         "id": str(p.id),
@@ -49,21 +40,15 @@ def product_to_dict(p: Product):
         "created_at": getattr(p, "created_at", None).isoformat() if getattr(p, "created_at", None) else None,
     }
 
-
-# =======================
-# JSON list & detail (Tutorial: show_json & show_json_by_id)
-# =======================
+@login_required(login_url='/login/')
 @require_http_methods(["GET"])
 def api_products_list(request):
-    """Return list product dalam JSON (dipakai index via fetch)."""
     qs = Product.objects.all().order_by("-id")
     data = [product_to_dict(p) for p in qs]
-    # sesuai tutorial: kembalikan LIST langsung
     return JsonResponse(data, safe=False)
 
 @require_http_methods(["GET"])
 def api_product_by_id(request, pk):
-    """Return detail 1 product (dipakai halaman detail AJAX, kalau diperlukan)."""
     try:
         p = Product.objects.select_related("user").get(pk=pk)
     except Product.DoesNotExist:
@@ -72,14 +57,9 @@ def api_product_by_id(request, pk):
     data["user_username"] = p.user.username if p.user_id else None
     return JsonResponse(data)
 
-
-# =======================
-# AJAX CRUD (Create/Update/Delete) — JSON only
-# =======================
 @login_required(login_url='/login/')
 @require_http_methods(["POST"])
 def api_product_create(request):
-    # XSS defense (server-side), sesuai tutorial: strip_tags
     post = request.POST.copy()
     if "name" in post: post["name"] = strip_tags(post["name"])
     if "description" in post: post["description"] = strip_tags(post["description"])
@@ -114,10 +94,7 @@ def api_product_delete(request, pk):
     obj.delete()
     return JsonResponse({"ok": True, "msg": "Deleted"})
 
-
-# =======================
-# Auth (AJAX)
-# =======================
+@csrf_exempt
 @require_http_methods(["POST"])
 def login_ajax(request):
     form = AuthenticationForm(request, data=request.POST)
@@ -133,6 +110,7 @@ def login_ajax(request):
         return resp
     return JsonResponse({"ok": False, "errors": form.errors, "msg": "Invalid credentials"}, status=400)
 
+@csrf_exempt
 @require_http_methods(["POST"])
 def register_ajax(request):
     form = UserCreationForm(request.POST)
@@ -145,6 +123,7 @@ def register_ajax(request):
         })
     return JsonResponse({"ok": False, "errors": form.errors}, status=400)
 
+@csrf_exempt
 @login_required(login_url='/login/')
 @require_http_methods(["POST"])
 def logout_ajax(request):
@@ -153,9 +132,6 @@ def logout_ajax(request):
     resp.delete_cookie("last_login")
     return resp
 
-
-# =======================
-# =======================
 @login_required(login_url='/login/')
 def create_product(request):
     if request.method == "POST":
@@ -198,10 +174,6 @@ def delete_product(request, pk):
     messages.success(request, f"Produk '{name}' berhasil dihapus.")
     return redirect('main:show_main')
 
-
-# =======================
-# Legacy serializer (tugas sebelumnya)
-# =======================
 def show_xml(request):
     data = serializers.serialize("xml", Product.objects.all())
     return HttpResponse(data, content_type="application/xml")
@@ -218,10 +190,6 @@ def show_json_by_id(request, id):
     data = serializers.serialize("json", Product.objects.filter(pk=id))
     return HttpResponse(data, content_type="application/json")
 
-
-# =======================
-# Auth
-# =======================
 def register(request):
     form = UserCreationForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
