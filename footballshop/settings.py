@@ -29,7 +29,13 @@ SECRET_KEY = 'django-insecure-7+im5u5h%9hw%vd#^^vgi$ci97%mq7%aquff1_blcnfrb*g1ck
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1","febrian-abimanyu-footballshop.pbp.cs.ui.ac.id",'http://localhost:8000','http://127.0.0.1:8000',"10.0.2.2"]
+ALLOWED_HOSTS = [
+    "localhost", 
+    "127.0.0.1",
+    "febrian-abimanyu-footballshop.pbp.cs.ui.ac.id",
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+    "10.0.2.2"]
 
 CSRF_TRUSTED_ORIGINS = ["https://febrian-abimanyu-footballshop.pbp.cs.ui.ac.id"]
 
